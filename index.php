@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-
 <meta charset="UTF-8">
-<title>Maintenance Plan</title>
+<title>Maintenance Check Sheet</title>
 
 <style>
 
@@ -14,6 +13,10 @@ margin:0;
 padding:20px;
 }
 
+h1{
+margin-bottom:10px;
+}
+
 .toolbar{
 margin-bottom:15px;
 }
@@ -21,8 +24,8 @@ margin-bottom:15px;
 button{
 padding:8px 14px;
 margin-right:5px;
-cursor:pointer;
 font-weight:bold;
+cursor:pointer;
 }
 
 table{
@@ -37,14 +40,19 @@ text-align:center;
 }
 
 thead th{
-background:#eee;
+background:#ddd;
 position:sticky;
 top:0;
+z-index:2;
 }
 
-.monthHeader{
-background:white;
+.monthHead{
+background:#fff;
 font-weight:bold;
+}
+
+.nameCell{
+text-align:left;
 }
 
 .circle{
@@ -61,20 +69,32 @@ cursor:pointer;
 background:black;
 }
 
+.periodBox{
+display:flex;
+gap:6px;
+justify-content:center;
+}
+
+.selected{
+background:#d7ecff;
+}
+
 input[type=text]{
 width:100%;
 border:0;
 outline:none;
 }
 
-.periodBox{
-display:flex;
-gap:5px;
-justify-content:center;
+.headerBox{
+border:1px solid black;
+padding:8px;
+margin-bottom:10px;
 }
 
-.selected{
-background:#d8ecff;
+.headerRow{
+display:flex;
+gap:20px;
+margin-bottom:4px;
 }
 
 @media print{
@@ -91,14 +111,25 @@ display:none;
 
 <body>
 
-<h2>Maintenance Plan</h2>
+<h1>Maintenance Plan</h1>
 
 <div class="toolbar">
-
 <button onclick="addRow()">Add Row</button>
 <button onclick="deleteRow()">Delete Row</button>
 <button onclick="saveData()">Save</button>
 <button onclick="window.print()">Print</button>
+</div>
+
+<div class="headerBox">
+
+<div class="headerRow">
+<div><b>NAME & TYPE OF MACHINE :</b> Frame Line</div>
+</div>
+
+<div class="headerRow">
+<div><b>LINE :</b> FRAME</div>
+<div><b>REVISION :</b> 01</div>
+</div>
 
 </div>
 
@@ -111,16 +142,15 @@ display:none;
 <th rowspan="2">RUN</th>
 <th rowspan="2">STOP</th>
 <th rowspan="2">PERIOD</th>
-<th rowspan="2">CH.SHEET</th>
+<th rowspan="2">CHECK SHEET</th>
 <th rowspan="2">INCHARGE</th>
 <th rowspan="2">MxH</th>
 <th rowspan="2">LINE</th>
 <th rowspan="2">NAME</th>
-<th rowspan="2">FRM</th>
 <th colspan="12">Month</th>
 </tr>
 
-<tr class="monthHeader">
+<tr class="monthHead">
 <th>1</th>
 <th>2</th>
 <th>3</th>
@@ -137,8 +167,7 @@ display:none;
 
 </thead>
 
-<tbody id="tableBody">
-</tbody>
+<tbody id="tableBody"></tbody>
 
 </table>
 
@@ -146,15 +175,13 @@ display:none;
 
 let selectedRow=null
 
-function createMonth(){
+function createMonths(){
 
 let html=""
 
 for(let i=1;i<=12;i++){
 
-html+=`<td>
-<div class="circle" onclick="toggleCircle(this)"></div>
-</td>`
+html+=`<td><div class="circle" onclick="toggleCircle(this)"></div></td>`
 
 }
 
@@ -187,17 +214,15 @@ let table=document.getElementById("tableBody")
 
 let row=document.createElement("tr")
 
-row.onclick=function(){
-selectRow(row)
-}
+row.onclick=function(){selectRow(row)}
 
 row.innerHTML=`
 
 <td class="no"></td>
 
-<td><input type="checkbox"></td>
+<td><input type="radio" name="runstop"></td>
 
-<td><input type="checkbox"></td>
+<td><input type="radio" name="runstop"></td>
 
 <td>${createPeriod()}</td>
 
@@ -209,11 +234,9 @@ row.innerHTML=`
 
 <td><input type="text"></td>
 
-<td><input type="text"></td>
+<td class="nameCell"><input type="text"></td>
 
-<td><input type="text"></td>
-
-${createMonth()}
+${createMonths()}
 
 `
 
@@ -268,22 +291,6 @@ el.classList.toggle("done")
 }
 
 function saveData(){
-
-let rows=document.querySelectorAll("#tableBody tr")
-
-let data=[]
-
-rows.forEach(r=>{
-
-let obj={}
-
-obj.name=r.cells[8].innerText
-
-data.push(obj)
-
-})
-
-localStorage.setItem("maintenance",JSON.stringify(data))
 
 alert("Saved")
 
